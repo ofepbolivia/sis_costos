@@ -58,12 +58,12 @@ BEGIN
 						pro_cos.fecha_mod,
 						usu1.cuenta as usr_reg,
 						usu2.cuenta as usr_mod,
-                        pro_cos.id_gestion,
-                        tg.gestion
+                        prorra.id_tipo_costo_prorrateo,
+                        prorra.nombre
 						from cos.tprorrateo_cos pro_cos
 						inner join segu.tusuario usu1 on usu1.id_usuario = pro_cos.id_usuario_reg
 						left join segu.tusuario usu2 on usu2.id_usuario = pro_cos.id_usuario_mod
-                        inner join param.tgestion tg ON tg.id_gestion = pro_cos.id_gestion
+                        left join cos.ttipo_costo_prorrateo prorra on prorra.id_tipo_costo_prorrateo = pro_cos.id_tipo_costo_prorrateo
 				        where  ';
 
 			--Definicion de la respuesta
@@ -71,6 +71,7 @@ BEGIN
 			v_consulta:=v_consulta||' order by ' ||v_parametros.ordenacion|| ' ' || v_parametros.dir_ordenacion || ' limit ' || v_parametros.cantidad || ' offset ' || v_parametros.puntero;
 
 			--Devuelve la respuesta
+            raise notice 'v_consulta%',v_consulta;
 			return v_consulta;
 
 		end;
@@ -88,9 +89,9 @@ BEGIN
 			--Sentencia de la consulta de conteo de registros
 			v_consulta:='select count(id_prorrateo)
 					    from cos.tprorrateo_cos pro_cos
-					    inner join segu.tusuario usu1 on usu1.id_usuario = pro_cos.id_usuario_reg
+						inner join segu.tusuario usu1 on usu1.id_usuario = pro_cos.id_usuario_reg
 						left join segu.tusuario usu2 on usu2.id_usuario = pro_cos.id_usuario_mod
-                        inner join param.tgestion tg ON tg.id_gestion = pro_cos.id_gestion
+                        left join cos.ttipo_costo_prorrateo prorra on prorra.id_tipo_costo_prorrateo = pro_cos.id_tipo_costo_prorrateo
 					    where ';
 
 			--Definicion de la respuesta

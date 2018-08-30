@@ -55,34 +55,40 @@ BEGIN
 	if(p_transaccion='COS_PRO_COS_INS')then
 
         begin
-
-                --Sentencia de la insercion
-                insert into cos.tprorrateo_cos(
-                codigo,
-                nombre_prorrateo,
-                tipo_calculo,
-                estado_reg,
-                id_usuario_ai,
-                usuario_ai,
-                fecha_reg,
-                id_usuario_reg,
-                id_usuario_mod,
-                fecha_mod,
-                id_gestion
-                ) values(
-                upper(trim(v_parametros.codigo)),
-        		upper(trim(v_parametros.nombre_prorrateo)),
-                upper(trim(v_parametros.tipo_calculo)),
-                'activo',
-                v_parametros._id_usuario_ai,
-                v_parametros._nombre_usuario_ai,
-                now(),
-                p_id_usuario,
-                null,
-                NULL,
-                v_parametros.id_gestion
-                )RETURNING id_prorrateo into v_id_prorrateo;
-
+           							v_contador=0;
+                          			SELECT count(tpc.id_prorrateo)
+                                    INTO v_contador
+                                    FROM cos.tprorrateo_cos tpc
+                                    WHERE (upper(tpc.codigo) = upper(trim(v_parametros.codigo)) AND
+                                    upper(tpc.nombre_prorrateo) = upper(trim(v_parametros.nombre_prorrateo)));
+                                    IF(v_contador=0)THEN
+                                        --Sentencia de la insercion
+                                        insert into cos.tprorrateo_cos(
+                                        codigo,
+                                        nombre_prorrateo,
+                                        tipo_calculo,
+                                        estado_reg,
+                                        id_usuario_ai,
+                                        usuario_ai,
+                                        fecha_reg,
+                                        id_usuario_reg,
+                                        id_usuario_mod,
+                                        fecha_mod,
+                                        id_tipo_costo_prorrateo
+                                        ) values(
+                                        upper(trim(v_parametros.codigo)),
+                                        upper(trim(v_parametros.nombre_prorrateo)),
+                                        upper(trim(v_parametros.tipo_calculo)),
+                                        'activo',
+                                        v_parametros._id_usuario_ai,
+                                        v_parametros._nombre_usuario_ai,
+                                        now(),
+                                        p_id_usuario,
+                                        null,
+                                        NULL,
+                                      	v_parametros.id_tipo_costo_prorrateo
+                                      	)RETURNING id_prorrateo into v_id_prorrateo;
+									END IF;
                 --Definicion de la respuesta
                 v_resp = pxp.f_agrega_clave(v_resp,'mensaje','ProrrateoCostos almacenado(a) con exito (id_prorrateo'||v_id_prorrateo||')');
                 v_resp = pxp.f_agrega_clave(v_resp,'id_prorrateo',v_id_prorrateo::varchar);
@@ -102,6 +108,18 @@ BEGIN
 	elsif(p_transaccion='COS_PRO_COS_MOD')then
 
 		begin
+
+        --validar que el nuevo codigo y nombre no existan en la base de datos
+
+        if not EXISTS (Select 1
+                        from cos.tprorrateo_cos pro
+                        where pro.id_prorrateo<>v_parametros.id_prorrateo
+                        and pro.codigo=upper(trim(v_parametros.codigo))
+                        and pro.nombre_prorrateo=upper(trim(v_parametros.nombre_prorrateo)))THEN
+
+
+
+
 			--Sentencia de la modificacion
 			update cos.tprorrateo_cos set
 			codigo = upper(trim(v_parametros.codigo)),
@@ -111,8 +129,13 @@ BEGIN
 			fecha_mod = now(),
 			id_usuario_ai = v_parametros._id_usuario_ai,
 			usuario_ai = v_parametros._nombre_usuario_ai,
-            id_gestion = v_parametros.id_gestion
+            id_tipo_costo_prorrateo = v_parametros.id_tipo_costo_prorrateo
 			where id_prorrateo=v_parametros.id_prorrateo;
+
+    else
+    	raise exception 'El codigo y nombre de prorrateo que intenta modificar ya existe, revise los prorrateos registrados.';
+    end if;
+
 
 			--Definicion de la respuesta
             v_resp = pxp.f_agrega_clave(v_resp,'mensaje','ProrrateoCostos modificado(a)');
@@ -319,8 +342,7 @@ BEGIN
             INTO v_contador
             FROM cos.tprorrateo_cos tpc
             WHERE (upper(tpc.codigo) = upper(trim(v_parametros.codigo)) AND
-            upper(tpc.nombre_prorrateo) = upper(trim(v_parametros.nombre_prorrateo))) AND
-            tpc.id_gestion = v_parametros.id_gestion;
+            upper(tpc.nombre_prorrateo) = upper(trim(v_parametros.nombre_prorrateo)));
 
             IF(v_contador>=1)THEN
         		v_bandera = true;

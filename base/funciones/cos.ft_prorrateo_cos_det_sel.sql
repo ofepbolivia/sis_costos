@@ -53,7 +53,7 @@ BEGIN
             			procosde.id_prorrateo_det,
             			procosde.id_prorrateo,
 						procosde.id_tipo_costo,
-						procosde.id_cuenta,
+						--procosde.id_cuenta,
 						procosde.id_auxiliar,
 						procosde.estado_reg,
 						procosde.id_usuario_ai,
@@ -69,20 +69,20 @@ BEGIN
                         c.nombre_cuenta AS desc_cuenta,
                         c.nro_cuenta,
                         aux.nombre_auxiliar AS desc_auxiliar,
-                        aux.codigo_auxiliar
+                        aux.codigo_auxiliar,
+                        procosde.cuenta_nro
 						from cos.tprorrateo_cos_det procosde
 						inner join segu.tusuario usu1 on usu1.id_usuario = procosde.id_usuario_reg
 						left join segu.tusuario usu2 on usu2.id_usuario = procosde.id_usuario_mod
                         inner join cos.ttipo_costo tc ON tc.id_tipo_costo = procosde.id_tipo_costo
-                        inner join conta.tcuenta c ON c.id_cuenta = procosde.id_cuenta
+                        inner join conta.tcuenta c ON c.nro_cuenta = procosde.cuenta_nro and c.id_gestion = 15
                         inner join conta.tauxiliar aux ON aux.id_auxiliar = procosde.id_auxiliar
-
 				        where  ';
 
 			--Definicion de la respuesta
 			v_consulta:=v_consulta||v_parametros.filtro;
 			v_consulta:=v_consulta||' order by ' ||v_parametros.ordenacion|| ' ' || v_parametros.dir_ordenacion || ' limit ' || v_parametros.cantidad || ' offset ' || v_parametros.puntero;
-
+raise notice 'v_consulta%',v_consulta;
 			--Devuelve la respuesta
 			return v_consulta;
 
@@ -101,11 +101,12 @@ BEGIN
 			--Sentencia de la consulta de conteo de registros
 			v_consulta:='select count(id_prorrateo_det)
 					    from cos.tprorrateo_cos_det procosde
-					    inner join segu.tusuario usu1 on usu1.id_usuario = procosde.id_usuario_reg
+						inner join segu.tusuario usu1 on usu1.id_usuario = procosde.id_usuario_reg
 						left join segu.tusuario usu2 on usu2.id_usuario = procosde.id_usuario_mod
                         inner join cos.ttipo_costo tc ON tc.id_tipo_costo = procosde.id_tipo_costo
-                        inner join conta.tcuenta c ON c.id_cuenta = procosde.id_cuenta
+                        inner join conta.tcuenta c ON c.nro_cuenta = procosde.cuenta_nro and c.id_gestion = 15
                         inner join conta.tauxiliar aux ON aux.id_auxiliar = procosde.id_auxiliar
+
 					    where ';
 
 			--Definicion de la respuesta

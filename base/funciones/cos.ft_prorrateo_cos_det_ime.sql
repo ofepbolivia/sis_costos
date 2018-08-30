@@ -33,6 +33,10 @@ DECLARE
     v_contador				integer;
     v_bandera				boolean;
 
+    v_editar				integer;
+    contador				record;
+  	v_arreglo				INTEGER[];
+    v_length				integer;
 BEGIN
 
     v_nombre_funcion = 'cos.ft_prorrateo_cos_det_ime';
@@ -48,35 +52,72 @@ BEGIN
 	if(p_transaccion='COS_PROCOSDE_INS')then
 
         begin
+
+
+
+            --RAISE EXCEPTION 'auxiliares: %',v_parametros.id_auxiliar;
+            --v_arreglo = v_parametros.id_auxiliar;
+         	--RAISE EXCEPTION 'auxiliares: %, %, %',v_arreglo,v_length,i;
+                --validar detalle del prorrateo
+
+
+
+
+                      v_arreglo = string_to_array(v_parametros.id_auxiliar,',');
+                      v_length = array_length(v_arreglo,1);
+                      for i in 1..v_length
+                          loop
+
+                          			v_contador=0;
+
+                          			select count(tpcd.id_prorrateo_det)
+                                    INTO v_contador
+                                    from cos.tprorrateo_cos_det tpcd
+                                    where tpcd.id_tipo_costo = v_parametros.id_tipo_costo AND
+                                          tpcd.cuenta_nro = v_parametros.cuenta_nro and
+                                          tpcd.id_auxiliar = v_arreglo[i]::INTEGER;
+                                         -- raise exception 'v_editar: %, %', v_contador, p_transaccion;
+                                    IF(v_contador=0)THEN
+                                            insert into cos.tprorrateo_cos_det(
+                                            id_prorrateo,
+                                            id_tipo_costo,
+                                            --id_cuenta,
+                                            cuenta_nro,
+                                            id_auxiliar,
+                                            estado_reg,
+                                            id_usuario_ai,
+                                            usuario_ai,
+                                            fecha_reg,
+                                            id_usuario_reg,
+                                            fecha_mod,
+                                            id_usuario_mod
+                                            )
+                                             values(
+                                            v_parametros.id_prorrateo,
+                                            v_parametros.id_tipo_costo,
+                                            --v_parametros.id_cuenta,
+                                            v_parametros.cuenta_nro,
+                                            v_arreglo[i]::INTEGER,
+                                            'activo',
+                                            v_parametros._id_usuario_ai,
+                                            v_parametros._nombre_usuario_ai,
+                                            now(),
+                                            p_id_usuario,
+                                            null,
+                                            null
+                                            )RETURNING id_prorrateo_det into v_id_prorrateo_det;
+
+                                      END IF;
+
+        				end loop;
+
+
+
+
+
+
         	--Sentencia de la insercion
-        	insert into cos.tprorrateo_cos_det(
-            id_prorrateo,
-			id_tipo_costo,
-			id_cuenta,
-			id_auxiliar,
-			estado_reg,
-			id_usuario_ai,
-			usuario_ai,
-			fecha_reg,
-			id_usuario_reg,
-			fecha_mod,
-			id_usuario_mod
-          	) values(
-            v_parametros.id_prorrateo,
-			v_parametros.id_tipo_costo,
-			v_parametros.id_cuenta,
-			v_parametros.id_auxiliar,
-			'activo',
-			v_parametros._id_usuario_ai,
-			v_parametros._nombre_usuario_ai,
-			now(),
-			p_id_usuario,
-			null,
-			null
 
-
-
-			)RETURNING id_prorrateo_det into v_id_prorrateo_det;
 
 			--Definicion de la respuesta
 			v_resp = pxp.f_agrega_clave(v_resp,'mensaje','ProrrateoCosDet almacenado(a) con exito (id_prorrateo_det'||v_id_prorrateo_det||')');
@@ -97,17 +138,40 @@ BEGIN
 	elsif(p_transaccion='COS_PROCOSDE_MOD')then
 
 		begin
-			--Sentencia de la modificacion
-			update cos.tprorrateo_cos_det set
-            id_prorrateo = v_parametros.id_prorrateo,
-			id_tipo_costo = v_parametros.id_tipo_costo,
-			id_cuenta = v_parametros.id_cuenta,
-			id_auxiliar = v_parametros.id_auxiliar,
-			fecha_mod = now(),
-			id_usuario_mod = p_id_usuario,
-			id_usuario_ai = v_parametros._id_usuario_ai,
-			usuario_ai = v_parametros._nombre_usuario_ai
-			where id_prorrateo_det=v_parametros.id_prorrateo_det;
+         			  v_arreglo = string_to_array(v_parametros.id_auxiliar,',');
+                      v_length = array_length(v_arreglo,1);
+                      for i in 1..v_length
+                          loop
+
+                          v_editar=0;
+
+                          			select count(tpcd.id_prorrateo_det)
+                                    INTO v_editar
+                                    from cos.tprorrateo_cos_det tpcd
+                                    where tpcd.id_tipo_costo = v_parametros.id_tipo_costo AND
+                                          tpcd.cuenta_nro = v_parametros.cuenta_nro and
+                                          tpcd.id_auxiliar = v_arreglo[i]::INTEGER;
+                                    --raise exception 'v_editar: %, %', v_editar, p_transaccion;
+                                    IF(v_editar=0)THEN
+
+                          				--Sentencia de la modificacion
+                                        update cos.tprorrateo_cos_det set
+                                        id_prorrateo = v_parametros.id_prorrateo,
+                                        id_tipo_costo = v_parametros.id_tipo_costo,
+                                        --id_cuenta = v_parametros.id_cuenta,
+                                        cuenta_nro = v_parametros.cuenta_nro,
+                                        id_auxiliar = v_arreglo[i]::INTEGER,
+                                        fecha_mod = now(),
+                                        id_usuario_mod = p_id_usuario,
+                                        id_usuario_ai = v_parametros._id_usuario_ai,
+                                        usuario_ai = v_parametros._nombre_usuario_ai
+                                        where id_prorrateo_det=v_parametros.id_prorrateo_det;
+
+                                    ELSE
+                                    	raise EXCEPTION 'La Combinacion (Tipo Costo, Nro Cuenta y Auxiliar) ya existe, revise los prorrateos registrados.';
+                                    END IF;
+                          end loop;
+
 
 			--Definicion de la respuesta
             v_resp = pxp.f_agrega_clave(v_resp,'mensaje','ProrrateoCosDet modificado(a)');
@@ -155,7 +219,7 @@ BEGIN
             INTO v_contador
             from cos.tprorrateo_cos_det tpcd
             where tpcd.id_tipo_costo = v_parametros.id_tipo_costo AND
-            tpcd.id_cuenta = v_parametros.id_cuenta AND tpcd.id_auxiliar = v_parametros.id_auxiliar AND
+            tpcd.cuenta_nro = v_parametros.cuenta_nro AND tpcd.id_auxiliar = v_parametros.id_auxiliar AND
             tpcd.id_prorrateo = v_parametros.id_prorrateo;
 
             IF(v_contador>=1)THEN
