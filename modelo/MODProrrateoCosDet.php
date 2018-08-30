@@ -8,22 +8,22 @@
 */
 
 class MODProrrateoCosDet extends MODbase{
-	
+
 	function __construct(CTParametro $pParam){
 		parent::__construct($pParam);
 	}
-			
+
 	function listarProrrateoCosDet(){
 		//Definicion de variables para ejecucion del procedimientp
 		$this->procedimiento='cos.ft_prorrateo_cos_det_sel';
 		$this->transaccion='COS_PROCOSDE_SEL';
 		$this->tipo_procedimiento='SEL';//tipo de transaccion
-				
+
 		//Definicion de la lista del resultado del query
 		$this->captura('id_prorrateo_det','int4');
 		$this->captura('id_prorrateo','int4');
 		$this->captura('id_tipo_costo','int4');
-		$this->captura('id_cuenta','int4');
+		//$this->captura('id_cuenta','int4');
 		$this->captura('id_auxiliar','int4');
 		$this->captura('estado_reg','varchar');
 		$this->captura('id_usuario_ai','int4');
@@ -40,26 +40,30 @@ class MODProrrateoCosDet extends MODbase{
 		$this->captura('nro_cuenta','varchar');
 		$this->captura('desc_auxiliar','varchar');
 		$this->captura('codigo_auxiliar','varchar');
+		$this->captura('cuenta_nro','varchar');
+
 
 		//Ejecuta la instruccion
 		$this->armarConsulta();
+		//echo $this->consulta; exit;
 		$this->ejecutarConsulta();
-		
+
 		//Devuelve la respuesta
 		return $this->respuesta;
 	}
-			
+
 	function insertarProrrateoCosDet(){
 		//Definicion de variables para ejecucion del procedimiento
 		$this->procedimiento='cos.ft_prorrateo_cos_det_ime';
 		$this->transaccion='COS_PROCOSDE_INS';
 		$this->tipo_procedimiento='IME';
-				
+
 		//Define los parametros para la funcion
 		$this->setParametro('id_prorrateo','id_prorrateo','int4');
 		$this->setParametro('id_tipo_costo','id_tipo_costo','int4');
-		$this->setParametro('id_cuenta','id_cuenta','int4');
-		$this->setParametro('id_auxiliar','id_auxiliar','int4');
+		//$this->setParametro('id_cuenta','id_cuenta','int4');
+		$this->setParametro('id_auxiliar','id_auxiliar','varchar');
+		$this->setParametro('cuenta_nro','cuenta_nro','varchar');
 		$this->setParametro('estado_reg','estado_reg','varchar');
 
 		//Ejecuta la instruccion
@@ -69,19 +73,20 @@ class MODProrrateoCosDet extends MODbase{
 		//Devuelve la respuesta
 		return $this->respuesta;
 	}
-			
+
 	function modificarProrrateoCosDet(){
 		//Definicion de variables para ejecucion del procedimiento
 		$this->procedimiento='cos.ft_prorrateo_cos_det_ime';
 		$this->transaccion='COS_PROCOSDE_MOD';
 		$this->tipo_procedimiento='IME';
-				
+
 		//Define los parametros para la funcion
 		$this->setParametro('id_prorrateo_det','id_prorrateo_det','int4');
 		$this->setParametro('id_prorrateo','id_prorrateo','int4');
 		$this->setParametro('id_tipo_costo','id_tipo_costo','int4');
-		$this->setParametro('id_cuenta','id_cuenta','int4');
-		$this->setParametro('id_auxiliar','id_auxiliar','int4');
+		//$this->setParametro('id_cuenta','id_cuenta','int4');
+		$this->setParametro('cuenta_nro','cuenta_nro','varchar');
+		$this->setParametro('id_auxiliar','id_auxiliar','varchar');
 		$this->setParametro('estado_reg','estado_reg','varchar');
 
 		//Ejecuta la instruccion
@@ -91,13 +96,13 @@ class MODProrrateoCosDet extends MODbase{
 		//Devuelve la respuesta
 		return $this->respuesta;
 	}
-			
+
 	function eliminarProrrateoCosDet(){
 		//Definicion de variables para ejecucion del procedimiento
 		$this->procedimiento='cos.ft_prorrateo_cos_det_ime';
 		$this->transaccion='COS_PROCOSDE_ELI';
 		$this->tipo_procedimiento='IME';
-				
+
 		//Define los parametros para la funcion
 		$this->setParametro('id_prorrateo_det','id_prorrateo_det','int4');
 		$this->setParametro('id_prorrateo','id_prorrateo','int4');
@@ -117,7 +122,7 @@ class MODProrrateoCosDet extends MODbase{
 		$this->tipo_procedimiento='SEL';//tipo de transaccion
 
 		$this->setCount(false);
-		
+
 		//Definicion de la lista del resultado del query
 		$this->captura('id_tipo_costo_cuenta','int4');
 		$this->captura('estado_reg','varchar');
@@ -179,7 +184,7 @@ class MODProrrateoCosDet extends MODbase{
 		$this->setCount(false);
 
 		$this->setParametro('id_tipo_costo','id_tipo_costo','int4');
-		$this->setParametro('id_cuenta','id_cuenta','int4');
+		$this->setParametro('cuenta_nro','cuenta_nro','int4');
 		$this->setParametro('id_auxiliar','id_auxiliar','int4');
 		$this->setParametro('id_prorrateo','id_prorrateo','int4');
 
@@ -191,6 +196,6 @@ class MODProrrateoCosDet extends MODbase{
 		//Devuelve la respuesta
 		return $this->respuesta;
 	}
-			
+
 }
 ?>

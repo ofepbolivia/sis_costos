@@ -7,8 +7,8 @@
 *@description Clase que recibe los parametros enviados por la vista para mandar a la capa de Modelo
 */
 
-class ACTProrrateoCos extends ACTbase{    
-			
+class ACTProrrateoCos extends ACTbase{
+
 	function listarProrrateoCos(){
 		$this->objParam->defecto('ordenacion','id_prorrateo');
 
@@ -17,6 +17,9 @@ class ACTProrrateoCos extends ACTbase{
 			$this->objParam->addFiltro("pro_cos.id_gestion = ". $this->objParam->getParametro('id_gestion'));
 
 		}
+	 if ($this->objParam->getParametro('prorrateo') == 'especifico') {
+			$this->objParam->addFiltro("pro_cos.id_tipo_costo_prorrateo = ". $this->objParam->getParametro('id_tipo_costo_prorrateo'));
+		}
 
 		$this->objParam->defecto('dir_ordenacion','asc');
 		if($this->objParam->getParametro('tipoReporte')=='excel_grid' || $this->objParam->getParametro('tipoReporte')=='pdf_grid'){
@@ -24,24 +27,24 @@ class ACTProrrateoCos extends ACTbase{
 			$this->res = $this->objReporte->generarReporteListado('MODProrrateoCos','listarProrrateoCos');
 		} else{
 			$this->objFunc=$this->create('MODProrrateoCos');
-			
+
 			$this->res=$this->objFunc->listarProrrateoCos($this->objParam);
 		}
 		$this->res->imprimirRespuesta($this->res->generarJson());
 	}
-				
+
 	function insertarProrrateoCos(){
-		$this->objFunc=$this->create('MODProrrateoCos');	
+		$this->objFunc=$this->create('MODProrrateoCos');
 		if($this->objParam->insertar('id_prorrateo')){
-			$this->res=$this->objFunc->insertarProrrateoCos($this->objParam);			
-		} else{			
+			$this->res=$this->objFunc->insertarProrrateoCos($this->objParam);
+		} else{
 			$this->res=$this->objFunc->modificarProrrateoCos($this->objParam);
 		}
 		$this->res->imprimirRespuesta($this->res->generarJson());
 	}
-						
+
 	function eliminarProrrateoCos(){
-			$this->objFunc=$this->create('MODProrrateoCos');	
+			$this->objFunc=$this->create('MODProrrateoCos');
 		$this->res=$this->objFunc->eliminarProrrateoCos($this->objParam);
 		$this->res->imprimirRespuesta($this->res->generarJson());
 	}
@@ -51,14 +54,14 @@ class ACTProrrateoCos extends ACTbase{
 		$this->res=$this->objFunc->clonarProrrateoCos($this->objParam);
 		$this->res->imprimirRespuesta($this->res->generarJson());
 	}
-	
+
 	function validarProrrateo(){
 		$this->objFunc=$this->create('MODProrrateoCos');
 		$this->res=$this->objFunc->validarProrrateo($this->objParam);
 		$this->res->imprimirRespuesta($this->res->generarJson());
 	}
 
-			
+
 }
 
 ?>

@@ -7,8 +7,8 @@
 *@description Clase que recibe los parametros enviados por la vista para mandar a la capa de Modelo
 */
 
-class ACTProrrateoCosDet extends ACTbase{    
-			
+class ACTProrrateoCosDet extends ACTbase{
+
 	function listarProrrateoCosDet(){
 		$this->objParam->defecto('ordenacion','id_prorrateo_det');
 
@@ -22,22 +22,23 @@ class ACTProrrateoCosDet extends ACTbase{
 			$this->res = $this->objReporte->generarReporteListado('MODProrrateoCosDet','listarProrrateoCosDet');
 		} else{
 			$this->objFunc=$this->create('MODProrrateoCosDet');
-			
+
 			$this->res=$this->objFunc->listarProrrateoCosDet($this->objParam);
 		}
 		$this->res->imprimirRespuesta($this->res->generarJson());
 	}
-				
+
 	function insertarProrrateoCosDet(){
-		$this->objFunc=$this->create('MODProrrateoCosDet');	
+		$this->objFunc=$this->create('MODProrrateoCosDet');
+		///var_dump($this->objParam->insertar('id_prorrateo_det'));exit;
 		if($this->objParam->insertar('id_prorrateo_det')){
-			$this->res=$this->objFunc->insertarProrrateoCosDet($this->objParam);			
-		} else{			
+			$this->res=$this->objFunc->insertarProrrateoCosDet($this->objParam);
+		} else{
 			$this->res=$this->objFunc->modificarProrrateoCosDet($this->objParam);
 		}
 		$this->res->imprimirRespuesta($this->res->generarJson());
 	}
-						
+
 	function eliminarProrrateoCosDet(){
 		$this->objFunc=$this->create('MODProrrateoCosDet');
 		$this->res=$this->objFunc->eliminarProrrateoCosDet($this->objParam);
@@ -67,7 +68,7 @@ class ACTProrrateoCosDet extends ACTbase{
 		$this->res=$this->objFunc->validarProrrateoDet($this->objParam);
 		$this->res->imprimirRespuesta($this->res->generarJson());
 	}
-			
+
 }
 
 ?>

@@ -12,26 +12,19 @@ header("content-type: text/javascript; charset=UTF-8");
 <script>
 Phx.vista.ProrrateoCos=Ext.extend(Phx.gridInterfaz,{
 
-	desc_gestion: '',
+	//desc_gestion: '',
 	constructor:function(config){
 
-		this.tbarItems = ['-',
-			this.cmbGestion,'-'
 
-		];
 		this.maestro=config.maestro;
+		var prorrateo = config.prorrateo;
     	//llama al constructor de la clase padre
 		Phx.vista.ProrrateoCos.superclass.constructor.call(this,config);
 		this.init();
+	  console.log('config',config);
 
-		this.addButton('clonar_prorrateo',{
-			grupo:[0,1,2,3,4,5],
-			text:'Duplicar Prorrateo',
-			iconCls: 'brenew',
-			disabled:false,
-			handler:this.clonarProrrateo,
-			tooltip: '<b>Clona el prorrateo de costo.</b>'
-		});
+
+var that = this;
 
 		Ext.Ajax.request({
 			url:'../../sis_parametros/control/Gestion/obtenerGestionByFecha',
@@ -39,9 +32,14 @@ Phx.vista.ProrrateoCos=Ext.extend(Phx.gridInterfaz,{
 			success:function (resp) {
 				var reg = Ext.util.JSON.decode(Ext.util.Format.trim(resp.responseText));
 				if(!reg.ROOT.error){
-					this.cmbGestion.setValue(reg.ROOT.datos.id_gestion);
-					this.cmbGestion.setRawValue(reg.ROOT.datos.anho);
-					this.store.baseParams.id_gestion = reg.ROOT.datos.id_gestion;
+					console.log('config',that.prorrateo);
+					if(that.prorrateo==undefined){
+							this.store.baseParams.prorrateo = 'general';
+						}else {
+							this.store.baseParams.prorrateo = that.prorrateo;
+							this.store.baseParams.id_tipo_costo_prorrateo = that.maestro.id_tipo_costo_prorrateo;
+							console.log('config',that.prorrateo, that.maestro.id_tipo_costo_prorrateo, this.maestro.id_tipo_costo_prorrateo);
+						}
 					this.load({params:{start:0, limit:this.tam_pag}});
 				}else{
 
@@ -53,86 +51,71 @@ Phx.vista.ProrrateoCos=Ext.extend(Phx.gridInterfaz,{
 			scope:this
 		});
 		this.iniciarEventos();
-		this.cmbGestion.on('select',this.capturarEventos, this);
+		//this.cmbGestion.on('select',this.capturarEventos, this);
 	},
-
-	iniciarEventos: function () {
-		this.Cmp.id_gestion.on('focus', function () {
-			this.desc_gestion = this.Cmp.id_gestion.getRawValue();
-		},this);
-
-		this.Cmp.id_gestion.on('select', function () {
-			this.desc_gestion = this.Cmp.id_gestion.getRawValue();
-		},this);
-
-		this.Cmp.id_gestion.on('blur', function () {
-			this.Cmp.id_gestion.setRawValue(this.desc_gestion);
-		},this);
-
-	},
-
-	capturarEventos: function () {
-
-		this.store.baseParams.id_gestion=this.cmbGestion.getValue();
-		this.load({params:{start:0, limit:this.tam_pag}});
-	},
-
-	clonarProrrateo: function () {
-
-			rec = {data:{id_gestion:this.cmbGestion.getValue()}}
-			Phx.CP.loadWindows('../../../sis_costos/vista/prorrateo_cos/ClonarPro.php',
-				'Definir la gestión a la que desea duplicar este prorrateo',
-				{
-					modal:true,
-					width:450,
-					height:150
-				},
-				rec.data
-				,
-				this.idContenedor,
-				'ClonarPro'
-			);
-
-	},
-
-	cmbGestion: new Ext.form.ComboBox({
-		name: 'gestion',
-		id: 'gestion_reg',
-		fieldLabel: 'Gestion',
-		allowBlank: true,
-		emptyText:'Gestion...',
-		blankText: 'Año',
-		editable:false,
-		store:new Ext.data.JsonStore(
+	Grupos: [
 			{
-				url: '../../sis_parametros/control/Gestion/listarGestion',
-				id: 'id_gestion',
-				root: 'datos',
-				sortInfo:{
-					field: 'gestion',
-					direction: 'DESC'
-				},
-				totalProperty: 'total',
-				fields: ['id_gestion','gestion'],
-				// turn on remote sorting
-				remoteSort: true,
-				baseParams:{par_filtro:'gestion'}
-			}),
-		valueField: 'id_gestion',
-		triggerAction: 'all',
-		displayField: 'gestion',
-		hiddenName: 'id_gestion',
-		mode:'remote',
-		pageSize:5,
-		queryDelay:500,
-		listWidth:'280',
-		hidden:false,
-		width:80
-	}),
+					layout: 'column',
+					labelWidth: 80,
+					labelAlign: 'top',
+					border: false,
+					items: [
+							{
+									columnWidth: .50,
+									border: false,
+									layout: 'fit',
+									bodyStyle: 'padding-right:10px;',
+									items: [
+											{
+													xtype: 'fieldset',
+													title: 'Codigo y Nombre',
 
-	arrayDefaultColumHidden:[
-		'fecha_reg','estado_reg', 'usuario_ai'
+													autoHeight: true,
+													items: [
+															{
+																	layout: 'form',
+																	anchor: '100%',
+																	//bodyStyle: 'padding-right:10px;',
+																	border: false,
+																	padding: '0 5 0 5',
+																	//bodyStyle: 'padding-left:5px;',
+																	id_grupo: 1,
+																	items: []
+															}
+													]
+											}
+									]
+							},
+							{
+									columnWidth: .50,
+									border: false,
+									layout: 'fit',
+									bodyStyle: 'padding-right:10px;',
+									items: [
+											{
+													xtype: 'fieldset',
+													title: 'Tipo Calculo y Pertenece',
+
+													autoHeight: true,
+													items: [
+															{
+																	layout: 'form',
+																	anchor: '100%',
+																	//bodyStyle: 'padding-right:10px;',
+																	border: false,
+																	padding: '0 5 0 5',
+																	//bodyStyle: 'padding-left:5px;',
+																	id_grupo: 2,
+																	items: []
+															}
+													]
+											}
+									]
+							},
+					]
+			}
 	],
+
 	Atributos:[
 		{
 			//configuracion del componente
@@ -142,41 +125,27 @@ Phx.vista.ProrrateoCos=Ext.extend(Phx.gridInterfaz,{
 					name: 'id_prorrateo'
 			},
 			type:'Field',
-			form:true 
-		},
-
-		{
-			config:{
-				name : 'id_gestion',
-				origen : 'GESTION',
-				fieldLabel : 'Gestión',
-				allowBlank : false,
-				forceSelection:false,
-				disabled:true,
-				editable: false,
-				width: 125,
-				listWidth:'232',
-				pageSize: 5,
-				forceSelection: true,
-				renderer:function (value,p,record){
-
-					return String.format('<div ext:qtip="Bueno"><b><font color="green">{0}</font></b><br></div>', record.data['gestion']);
-				}
-			},
-			type : 'ComboRec',
-			id_grupo : 0,
-			form : true,
-			grid:true
+			form:true
 		},
 
 		{
 			config:{
 				name: 'codigo',
 				fieldLabel: 'Codigo',
+				labelStyle: 'font-weight:bold; color:#005300;',
 				allowBlank: false,
 				anchor: '80%',
 				gwidth: 100,
-				maxLength:20
+				maxLength:20,
+				style: {
+								background: '#D1FFBD',
+								color:'green',
+								fontWeight: 'bold'
+				},
+				renderer:function (value,p,record){
+
+					return String.format('<div ext:qtip="Codigo"><b><font color="green">{0}</font></b><br></div>', record.data['codigo']);
+				}
 			},
 				type:'TextField',
 				bottom_filter:true,
@@ -189,9 +158,15 @@ Phx.vista.ProrrateoCos=Ext.extend(Phx.gridInterfaz,{
 			config:{
 				name: 'nombre_prorrateo',
 				fieldLabel: 'Nombre Prorrateo',
+				labelStyle: 'font-weight:bold; color:#005300;',
 				allowBlank: false,
 				anchor: '80%',
 				gwidth: 300,
+				style: {
+								background: '#D1FFBD',
+								color:'green',
+								fontWeight: 'bold'
+				},
 				maxLength:200
 			},
 				type:'TextField',
@@ -205,6 +180,7 @@ Phx.vista.ProrrateoCos=Ext.extend(Phx.gridInterfaz,{
 			config:{
 				name: 'tipo_calculo',
 				fieldLabel: 'Tipo Calculo',
+				labelStyle: 'font-weight:bold; color:#001A8E;',
 				allowBlank: true,
 				anchor: '80%',
 				gwidth: 100,
@@ -214,16 +190,95 @@ Phx.vista.ProrrateoCos=Ext.extend(Phx.gridInterfaz,{
 				triggerAction:'all',
 				mode:'local',
 				store:[ 'Hrs Vuelo ATO', 'ASK, RPK', 'Nro. Vuelos', 'Hrs. Vuelo Flota','Hrs. Vuelo Nave', 'NroPasajeros', 'ASK'],
-				style:'text-transform:uppercase;'
-			},
+
+				style:'text-transform:uppercase; background:#C5E5F5; color:blue; font-weight:bold'
+				},
 				type:'ComboBox',
 				bottom_filter:true,
 				filters:{pfiltro:'pro_cos.tipo_calculo',type:'string'},
-				id_grupo:1,
+				id_grupo:2,
 				grid:true,
 				form:true
 		},
+		{
+			config: {
+				name: 'id_tipo_costo_prorrateo',
+				fieldLabel: 'Pertenece',
+				labelStyle: 'font-weight:bold; color:#001A8E;',
+				allowBlank: true,
+				style: {
+								background: '#C5E5F5',
+								color:'blue',
+								fontWeight: 'bold'
+				},
+				emptyText: 'Elija Prorrateo...',
+				store: new Ext.data.JsonStore({
+					url: '../../sis_costos/control/TipoCostoProrrateo/listarTipoCostoProrrateo',
+					id: 'id_tipo_costo_prorrateo',
+					root: 'datos',
+					sortInfo: {
+						field: 'nombre',
+						direction: 'ASC'
+					},
+					totalProperty: 'total',
+					fields: ['id_tipo_costo_prorrateo','nombre'],
+					remoteSort: true,
+					baseParams: {par_filtro: 'prorra.id_tipo_costo_prorrateo#prorra.nombre'}
+				}),
+				valueField: 'id_tipo_costo_prorrateo',
+				displayField: 'nombre',
+				gdisplayField: 'nombre',
+				hiddenName: 'id_tipo_costo_prorrateo',
+				forceSelection: true,
+				typeAhead: false,
+				triggerAction: 'all',
+				lazyRender: true,
+				mode: 'remote',
+				pageSize: 15,
+				queryDelay: 1000,
+				anchor: '80%',
+				gwidth: 300,
+				minChars: 2,
+				tpl: new Ext.XTemplate([
+					'<tpl for=".">',
+					'<div class="x-combo-list-item">',
+					'<div class="awesomecombo-item {checked}">',
+					'<p><b>Id Prorrateo:{id_tipo_costo_prorrateo}</b></p>',
+					'</div><p><b>Nombre:</b> <span style="color: green;">{nombre}</span></p>',
+					'</div></tpl>'
+				]),
+				renderer:function (value,p,record){
 
+					return String.format('<div ext:qtip="Bueno"><b><font color="green">{0}</font></b><br></div>', record.data['id_tipo_costo_prorrateo']);
+				},
+			},
+			type: 'ComboBox',
+			id_grupo: 2,
+			//bottom_filter: true,
+			filters: {pfiltro: 'prorra.nombre',type: 'string'},
+			grid: false,
+			form: true
+		},
+		{
+			config:{
+				name: 'nombre',
+				fieldLabel: 'Pertenece',
+				allowBlank: false,
+				anchor: '80%',
+				gwidth: 200,
+				maxLength:200,
+				renderer:function (value,p,record){
+
+					return String.format('<div ext:qtip="Pertenece"><b><font color="blue">{0}</font></b><br></div>', record.data['nombre']);
+				}
+			},
+				type:'TextField',
+				bottom_filter:true,
+				filters:{pfiltro:'prorra.nombre',type:'string'},
+				id_grupo:2,
+				grid:true,
+				form:false
+		},
 		{
 			config:{
 				name: 'estado_reg',
@@ -276,7 +331,7 @@ Phx.vista.ProrrateoCos=Ext.extend(Phx.gridInterfaz,{
 				allowBlank: true,
 				anchor: '80%',
 				gwidth: 100,
-							format: 'd/m/Y', 
+							format: 'd/m/Y',
 							renderer:function (value,p,record){return value?value.dateFormat('d/m/Y H:i:s'):''}
 			},
 				type:'DateField',
@@ -322,7 +377,7 @@ Phx.vista.ProrrateoCos=Ext.extend(Phx.gridInterfaz,{
 				allowBlank: true,
 				anchor: '80%',
 				gwidth: 100,
-							format: 'd/m/Y', 
+							format: 'd/m/Y',
 							renderer:function (value,p,record){return value?value.dateFormat('d/m/Y H:i:s'):''}
 			},
 				type:'DateField',
@@ -332,8 +387,8 @@ Phx.vista.ProrrateoCos=Ext.extend(Phx.gridInterfaz,{
 				form:false
 		}
 	],
-	tam_pag:50,	
-	title:'ProrrateoCostos',
+	tam_pag:50,
+	title:'Prorrateo Costos',
 	ActSave:'../../sis_costos/control/ProrrateoCos/insertarProrrateoCos',
 	ActDel:'../../sis_costos/control/ProrrateoCos/eliminarProrrateoCos',
 	ActList:'../../sis_costos/control/ProrrateoCos/listarProrrateoCos',
@@ -352,8 +407,10 @@ Phx.vista.ProrrateoCos=Ext.extend(Phx.gridInterfaz,{
 		{name:'fecha_mod', type: 'date',dateFormat:'Y-m-d H:i:s.u'},
 		{name:'usr_reg', type: 'string'},
 		{name:'usr_mod', type: 'string'},
-		{name:'id_gestion', type: 'numeric'},
-		{name:'gestion', type: 'numeric'}
+		//{name:'id_gestion', type: 'numeric'},
+		//{name:'gestion', type: 'numeric'},
+		{name:'id_tipo_costo_prorrateo', type: 'numeric'},
+		{name:'nombre', type: 'string'}
 
 	],
 	sortInfo:{
@@ -373,43 +430,12 @@ Phx.vista.ProrrateoCos=Ext.extend(Phx.gridInterfaz,{
 	],
 
 	onButtonNew:function () {
-
 		Phx.vista.ProrrateoCos.superclass.onButtonNew.call(this);
-		this.Cmp.id_gestion.setValue(this.cmbGestion.getValue());
-		this.Cmp.id_gestion.setRawValue(this.cmbGestion.getRawValue());
+		this.Cmp.id_prorrateo.setValue(null);
+		this.getComponente('id_tipo_costo_prorrateo').setValue(this.maestro.id_tipo_costo_prorrateo);
+
+		//console.log('RESPUESTA',this);
 	},
 
-	onSubmit: function (o,x, force) {
-		Ext.Ajax.request({
-			url: '../../sis_costos/control/ProrrateoCos/validarProrrateo',
-			params: {
-				codigo: this.Cmp.codigo.getValue(),
-				nombre_prorrateo: this.Cmp.nombre_prorrateo.getValue(),
-				id_gestion: this.Cmp.id_gestion.getValue()
-			},
-			success: function (resp) {
-				var reg = Ext.decode(Ext.util.Format.trim(resp.responseText));
-
-				if(JSON.parse(reg.ROOT.datos.v_bandera)){
-					Ext.Msg.show({
-						title: 'Advertencia',
-						msg: 'El registro con codigo /<b style="color: red">'+this.Cmp.codigo.getValue()+'</b>) y nombre (<span style="color: red">'+this.Cmp.nombre_prorrateo.getValue()
-						+'</span>) ya fue registrado para la gestion (<b style="color: red">'+this.Cmp.id_gestion.getRawValue()+') verifique sus prorrateos.</b>',
-						buttons: Ext.Msg.OK,
-						width: 512,
-						icon: Ext.Msg.WARNING
-					});
-				}else{
-					Phx.vista.ProrrateoCos.superclass.onSubmit.call(this, o);
-				}
-			},
-			failure: this.conexionFailure,
-			timeout: this.timeout,
-			scope: this
-		});
-
-	}
 });
 </script>
-		
-		

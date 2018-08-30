@@ -13,30 +13,31 @@ header("content-type: text/javascript; charset=UTF-8");
 Phx.vista.ProrrateoCosDet=Ext.extend(Phx.gridInterfaz,{
 
 	constructor:function(config){
+
 		this.maestro=config.maestro;
     	//llama al constructor de la clase padre
 		Phx.vista.ProrrateoCosDet.superclass.constructor.call(this,config);
 		this.init();
+
 		this.iniciarEventos();
+
+
+
 	},
 
 	iniciarEventos: function () {
 		this.Cmp.id_tipo_costo.on('select',function (cmb, record, index) {
-			this.Cmp.id_cuenta.reset();
-			this.Cmp.id_cuenta.modificado = true;
-			this.Cmp.id_cuenta.setDisabled(false);
-			this.Cmp.id_cuenta.store.baseParams = {par_filtro: 'c.nro_cuenta#c.nombre_cuenta', id_tipo_costo: this.Cmp.id_tipo_costo.getValue()};
-
-			/*this.Cmp.id_auxiliar.reset();
-			this.Cmp.id_auxiliar.modificado = true;
-			this.Cmp.id_auxiliar.setDisabled(false);
-			this.Cmp.id_auxiliar.store.baseParams = {par_filtro: 'aux.codigo_auxiliar#aux.nombre_auxiliar', id_tipo_costo: this.Cmp.id_tipo_costo.getValue()};*/
+			this.Cmp.cuenta_nro.reset();
+			this.Cmp.cuenta_nro.modificado = true;
+			this.Cmp.cuenta_nro.setDisabled(false);
+			this.Cmp.cuenta_nro.store.baseParams = {par_filtro: 'c.nro_cuenta#c.nombre_cuenta', id_tipo_costo: this.Cmp.id_tipo_costo.getValue()};
 			this.Cmp.id_auxiliar.reset();
+			this.Cmp.id_tipo_costo
 		},this);
-		
-		this.Cmp.id_cuenta.on('select', function (cmb, rec, index) {
-			console.log('cmb_id_cuenta :',cmb);
-			console.log('rec_id_cuenta :',rec.data.nro_cuenta);
+
+		this.Cmp.cuenta_nro.on('select', function (cmb, rec, index) {
+			console.log('cmb_cuenta_nro :',cmb);
+			console.log('rec_cuenta_nro :',rec.data.nro_cuenta);
 			console.log('this.Cmp.id_tipo_costo.getValue() :',this.Cmp.id_tipo_costo.getValue());
 			this.Cmp.id_auxiliar.reset();
 			this.Cmp.id_auxiliar.modificado = true;
@@ -44,8 +45,45 @@ Phx.vista.ProrrateoCosDet=Ext.extend(Phx.gridInterfaz,{
 			this.Cmp.id_auxiliar.store.baseParams = {par_filtro: 'aux.codigo_auxiliar#aux.nombre_auxiliar', id_tipo_costo: this.Cmp.id_tipo_costo.getValue(), nro_cuenta: rec.data.nro_cuenta};
 		}, this);
 
+
+
 	},
-	
+	Grupos: [
+			{
+					layout: 'column',
+					labelWidth: 80,
+					labelAlign: 'top',
+					border: false,
+					items: [
+							{
+									columnWidth: 1,
+									border: false,
+									layout: 'fit',
+									bodyStyle: 'padding-right:10px;',
+									items: [
+											{
+													xtype: 'fieldset',
+													title: 'DATOS DEL DETALLE DEL PRORRATEO',
+
+													autoHeight: true,
+													items: [
+															{
+																	layout: 'form',
+																	anchor: '100%',
+																	//bodyStyle: 'padding-right:10px;',
+																	border: false,
+																	padding: '0 5 0 5',
+																	//bodyStyle: 'padding-left:5px;',
+																	id_grupo: 1,
+																	items: []
+															}
+													]
+											}
+									]
+							},
+					]
+			}
+	],
 	Atributos:[
 		{
 			//configuracion del componente
@@ -55,7 +93,7 @@ Phx.vista.ProrrateoCosDet=Ext.extend(Phx.gridInterfaz,{
 					name: 'id_prorrateo_det'
 			},
 			type:'Field',
-			form:true 
+			form:true
 		},
 		{
 
@@ -71,6 +109,7 @@ Phx.vista.ProrrateoCosDet=Ext.extend(Phx.gridInterfaz,{
 			config: {
 				name: 'id_tipo_costo',
 				fieldLabel: 'Tipo de Costo',
+				labelStyle: 'font-weight:bold; color:#005300;',
 				allowBlank: true,
 				emptyText: 'Elija una opción...',
 				store: new Ext.data.JsonStore({
@@ -99,6 +138,11 @@ Phx.vista.ProrrateoCosDet=Ext.extend(Phx.gridInterfaz,{
 				queryDelay: 1000,
 				anchor: '100%',
 				gwidth: 300,
+				style: {
+								background: '#D1FFBD',
+								color:'green',
+								fontWeight: 'bold'
+				},
 				minChars: 2,
 				resizable:true,
 				tpl: new Ext.XTemplate([
@@ -115,7 +159,7 @@ Phx.vista.ProrrateoCosDet=Ext.extend(Phx.gridInterfaz,{
 				}
 			},
 			type: 'ComboBox',
-			id_grupo: 0,
+			id_grupo: 1,
 			bottom_filter: true,
 			filters: {pfiltro: 'tc.nombre#tc.codigo',type: 'string'},
 			grid: true,
@@ -123,28 +167,29 @@ Phx.vista.ProrrateoCosDet=Ext.extend(Phx.gridInterfaz,{
 		},
 		{
 			config: {
-				name: 'id_cuenta',
-				fieldLabel: 'Cuenta',
+				name: 'cuenta_nro',
+				fieldLabel: 'Nro Cuenta',
+				labelStyle: 'font-weight:bold; color:#005300;',
 				allowBlank: true,
 				emptyText: 'Elija una cuenta...',
 				disabled: true,
 				store: new Ext.data.JsonStore({
 					url: '../../sis_costos/control/ProrrateoCosDet/listarProrrateoCosCuenta',
-					id: 'id_cuenta',
+					id: 'cuenta_nro',
 					root: 'datos',
 					sortInfo: {
 						field: 'nro_cuenta',
 						direction: 'ASC'
 					},
 					totalProperty: 'total',
-					fields: ['id_cuenta', 'nro_cuenta','nombre_cuenta'],
+					fields: [ 'nro_cuenta','nombre_cuenta'],
 					remoteSort: true,
 					baseParams: {par_filtro: 'c.nro_cuenta#c.nombre_cuenta'}
 				}),
-				valueField: 'id_cuenta',
+				valueField: 'cuenta_nro',
 				displayField: 'nombre_cuenta',
 				gdisplayField: 'desc_cuenta',
-				hiddenName: 'id_cuenta',
+				hiddenName: 'cuenta_nro',
 				forceSelection: true,
 				typeAhead: false,
 				triggerAction: 'all',
@@ -154,6 +199,11 @@ Phx.vista.ProrrateoCosDet=Ext.extend(Phx.gridInterfaz,{
 				queryDelay: 1000,
 				anchor: '100%',
 				gwidth: 300,
+				style: {
+								background: '#C5E5F5',
+								color: 'blue',
+								fontWeight: 'bold'
+				},
 				minChars: 2,
 				resizable:true,
 				tpl: new Ext.XTemplate([
@@ -165,14 +215,14 @@ Phx.vista.ProrrateoCosDet=Ext.extend(Phx.gridInterfaz,{
 					'</div></tpl>'
 				]),
 				renderer : function(value, p, record) {
-					var cadena = "<b style='color: green'>("+record.data['nro_cuenta']+") - </b>"+record.data['desc_cuenta'];
+					var cadena = "<b style='color: blue'>("+record.data['nro_cuenta']+") - </b>"+record.data['desc_cuenta'];
 					return String.format('{0}', cadena);
 				}
 			},
 			type: 'ComboBox',
-			id_grupo: 0,
+			id_grupo: 1,
 			bottom_filter: true,
-			filters: {pfiltro: 'c.nombre_cuenta#c.nro_cuenta',type: 'string'},
+			filters: {pfiltro: 'c.nombre_cuenta#procosde.cuenta_nro',type: 'string'},
 			grid: true,
 			form: true
 		},
@@ -180,6 +230,8 @@ Phx.vista.ProrrateoCosDet=Ext.extend(Phx.gridInterfaz,{
 			config: {
 				name: 'id_auxiliar',
 				fieldLabel: 'Auxiliar',
+				labelStyle: 'font-weight:bold;',
+				enableMultiSelect: true,
 				allowBlank: true,
 				emptyText: 'Elija un auxiliar...',
 				disabled: true,
@@ -200,7 +252,7 @@ Phx.vista.ProrrateoCosDet=Ext.extend(Phx.gridInterfaz,{
 				displayField: 'nombre_auxiliar',
 				gdisplayField: 'desc_auxiliar',
 				hiddenName: 'id_auxiliar',
-				forceSelection: true,
+				forceSelection: false,
 				typeAhead: false,
 				triggerAction: 'all',
 				lazyRender: true,
@@ -209,23 +261,28 @@ Phx.vista.ProrrateoCosDet=Ext.extend(Phx.gridInterfaz,{
 				queryDelay: 1000,
 				anchor: '100%',
 				gwidth: 300,
+				style: {
+								background: '#E6FC7B',
+								color: 'black',
+								fontWeight: 'bold'
+				},
 				minChars: 2,
 				resizable:true,
+				itemSelector: 'div.awesomecombo-5item',
 				tpl: new Ext.XTemplate([
 					'<tpl for=".">',
-					'<div class="x-combo-list-item">',
-					'<div class="awesomecombo-item {checked}">',
+					'<div class="awesomecombo-5item {checked}">',
 					'<p><b>Cod. Auxiliar: {codigo_auxiliar}</b></p>',
 					'</div><p><b>Nombre Auxiliar:</b> <span style="color: green;">{nombre_auxiliar}</span></p>',
 					'</div></tpl>'
 				]),
 				renderer : function(value, p, record) {
-					var cadena = "<b style='color: green'>("+record.data['codigo_auxiliar']+") - </b>"+record.data['desc_auxiliar'];
+					var cadena = "<b style='color: #FF7400; font-weight:bold;'>("+record.data['codigo_auxiliar']+") - </b>"+record.data['desc_auxiliar'];
 					return String.format('{0}', cadena);
 				}
 			},
-			type: 'ComboBox',
-			id_grupo: 0,
+			type: 'AwesomeCombo',
+			id_grupo: 1,
 			bottom_filter: true,
 			filters: {pfiltro: 'aux.nombre_auxiliar#aux.codigo_auxiliar',type: 'string'},
 			grid: true,
@@ -283,7 +340,7 @@ Phx.vista.ProrrateoCosDet=Ext.extend(Phx.gridInterfaz,{
 				allowBlank: true,
 				anchor: '80%',
 				gwidth: 100,
-							format: 'd/m/Y', 
+							format: 'd/m/Y',
 							renderer:function (value,p,record){return value?value.dateFormat('d/m/Y H:i:s'):''}
 			},
 				type:'DateField',
@@ -314,7 +371,7 @@ Phx.vista.ProrrateoCosDet=Ext.extend(Phx.gridInterfaz,{
 				allowBlank: true,
 				anchor: '80%',
 				gwidth: 100,
-							format: 'd/m/Y', 
+							format: 'd/m/Y',
 							renderer:function (value,p,record){return value?value.dateFormat('d/m/Y H:i:s'):''}
 			},
 				type:'DateField',
@@ -339,7 +396,7 @@ Phx.vista.ProrrateoCosDet=Ext.extend(Phx.gridInterfaz,{
 				form:false
 		}
 	],
-	tam_pag:50,	
+	tam_pag:50,
 	title:'Prorrateo Costo Detalle',
 	ActSave:'../../sis_costos/control/ProrrateoCosDet/insertarProrrateoCosDet',
 	ActDel:'../../sis_costos/control/ProrrateoCosDet/eliminarProrrateoCosDet',
@@ -349,8 +406,8 @@ Phx.vista.ProrrateoCosDet=Ext.extend(Phx.gridInterfaz,{
 		{name:'id_prorrateo_det', type: 'numeric'},
 		{name:'id_prorrateo', type: 'numeric'},
 		{name:'id_tipo_costo', type: 'numeric'},
-		{name:'id_cuenta', type: 'numeric'},
-		{name:'id_auxiliar', type: 'numeric'},
+	//	{name:'id_cuenta', type: 'numeric'},
+		{name:'id_auxiliar', type: 'string'},
 		{name:'estado_reg', type: 'string'},
 		{name:'id_usuario_ai', type: 'numeric'},
 		{name:'usuario_ai', type: 'string'},
@@ -365,7 +422,9 @@ Phx.vista.ProrrateoCosDet=Ext.extend(Phx.gridInterfaz,{
 		{name:'desc_auxiliar', type: 'string'},
 		{name:'codigo', type: 'string'},
 		{name:'nro_cuenta', type: 'string'},
+		{name:'cuenta_nro', type: 'string'},
 		{name:'codigo_auxiliar', type: 'string'}
+
 
 	],
 	sortInfo:{
@@ -377,61 +436,46 @@ Phx.vista.ProrrateoCosDet=Ext.extend(Phx.gridInterfaz,{
 	btest:false,
 
 	onButtonEdit:function () {
-
-		Phx.vista.ProrrateoCosDet.superclass.onButtonEdit.call(this);
-		this.Cmp.id_cuenta.store.baseParams = {par_filtro: 'c.nro_cuenta#c.nombre_cuenta', id_tipo_costo: this.Cmp.id_tipo_costo.getValue()};
+		this.Cmp.cuenta_nro.store.baseParams = {par_filtro: 'c.nro_cuenta#c.nombre_cuenta', id_tipo_costo: this.Cmp.id_tipo_costo.getValue()};
 		this.Cmp.id_auxiliar.store.baseParams = {par_filtro: 'aux.codigo_auxiliar#aux.nombre_auxiliar', id_tipo_costo: this.Cmp.id_tipo_costo.getValue()};
-		this.Cmp.id_cuenta.setDisabled(false);
-		this.Cmp.id_auxiliar.setDisabled(false);
+		this.Cmp.cuenta_nro.setDisabled(true);
+		this.Cmp.id_auxiliar.setDisabled(true);
+		console.log('value update',	this.Cmp.id_tipo_costo);
+		this.Cmp.cuenta_nro.on('select', function(combo, record, index){
+						//Carga el resumen del activo fijo seleccionado
+						this.llenarcampo(record.data);
+					},this);
+		Phx.vista.ProrrateoCosDet.superclass.onButtonEdit.call(this);
 
+		//console.log('value update',	this.Cmp.cuenta_nro.reset());
 	},
 
-	onButtonNew:function () {
-		this.Cmp.id_cuenta.reset();
-		this.Cmp.id_auxiliar.reset();
-		this.Cmp.id_cuenta.setDisabled(true);
-		this.Cmp.id_auxiliar.setDisabled(true);
+onButtonNew:function () {
+	this.Cmp.cuenta_nro.on('select', function(combo, record, index){
+					//Carga el resumen del activo fijo seleccionado
+					this.llenarcampo(record.data);
+				},this);
 
 		Phx.vista.ProrrateoCosDet.superclass.onButtonNew.call(this);
+		//console.log('value INSERT	',this.Cmp.id_prorrateo_det.getValue());
+	 // console.log('value INSERT	',	this.Cmp.cuenta_nro);
 
+			this.Cmp.cuenta_nro.reset();
+			this.Cmp.id_auxiliar.reset();
+			this.Cmp.cuenta_nro.setDisabled(true);
+			this.Cmp.id_auxiliar.setDisabled(true);
+			this.Cmp.id_prorrateo_det.setValue(null);
+			//console.log('FORZAR ID',this.Cmp.id_prorrateo_det.setValue(null));
 	},
+	llenarcampo: function(data){
+		//console.log('RESPUESTA 2',data);
+	 this.Cmp.cuenta_nro.setValue(data.nro_cuenta);
+ },
 
-	onSubmit: function (o,x, force) {
-
-		Ext.Ajax.request({
-			url: '../../sis_costos/control/ProrrateoCosDet/validarProrrateoDet',
-			params: {
-				id_tipo_costo: this.Cmp.id_tipo_costo.getValue(),
-				id_cuenta: this.Cmp.id_cuenta.getValue(),
-				id_auxiliar: this.Cmp.id_auxiliar.getValue(),
-				id_prorrateo: this.maestro.id_prorrateo
-			},
-			success: function (resp) {
-				var reg = Ext.decode(Ext.util.Format.trim(resp.responseText));
-
-				if(JSON.parse(reg.ROOT.datos.v_bandera)){
-					Ext.Msg.show({
-						title: 'Advertencia',
-						msg: 'El registro con tipo costo (<b style="color: red">'+this.Cmp.id_tipo_costo.getRawValue()+'</b>), cuenta (<b style="color: red">'+this.Cmp.id_cuenta.getRawValue()
-						+'</b>) y auxiliar (<b style="color: red">'+this.Cmp.id_auxiliar.getRawValue()+'</b>) ya fue registrado para este prorrateo, verifique su detalle.',
-						buttons: Ext.Msg.OK,
-						width: 512,
-						icon: Ext.Msg.WARNING
-					});
-				}else{
-					Phx.vista.ProrrateoCos.superclass.onSubmit.call(this, o);
-				}
-			},
-			failure: this.conexionFailure,
-			timeout: this.timeout,
-			scope: this
-		});
-
-	},
-	
 	onReloadPage: function (m) {
 		this.maestro = m;
-		this.store.baseParams = {id_prorrateo:this.maestro.id_prorrateo};
+	  this.store.baseParams = {id_prorrateo:this.maestro.id_prorrateo};
+		//this.store.baseParams = {id_gestion:this.maestro.id_gestion};
 		this.load({params: {start: 0, limit: 50}});
 	},
 
@@ -441,5 +485,3 @@ Phx.vista.ProrrateoCosDet=Ext.extend(Phx.gridInterfaz,{
 	}
 });
 </script>
-		
-		
