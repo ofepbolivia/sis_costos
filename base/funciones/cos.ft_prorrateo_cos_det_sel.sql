@@ -234,6 +234,7 @@ BEGIN
                va_id_aux
             from cos.ttipo_costo_cuenta tct
             where tct.id_tipo_costo = v_parametros.id_tipo_costo::integer and tct.codigo_cuenta = v_parametros.nro_cuenta::varchar;
+            --order by tct.id_auxiliares desc limit 1;
 
             v_id_aux = array_to_string(va_id_aux,',');
 

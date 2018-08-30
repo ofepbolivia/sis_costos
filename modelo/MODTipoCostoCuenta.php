@@ -53,7 +53,9 @@ class MODTipoCostoCuenta extends MODbase{
 		$this->tipo_procedimiento='IME';
 
 		//Define los parametros para la funcion
-		$this->setParametro('estado_reg','estado_reg','varchar');
+        //$this->setParametro('id_tipo_costo_cuenta','id_tipo_costo_cuenta','int4');
+
+        $this->setParametro('estado_reg','estado_reg','varchar');
 		$this->setParametro('codigo_cuenta','codigo_cuenta','varchar');
 		$this->setParametro('id_auxiliares','id_auxiliares','varchar');
 		$this->setParametro('id_tipo_costo','id_tipo_costo','int4');
