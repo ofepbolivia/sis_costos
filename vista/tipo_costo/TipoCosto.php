@@ -311,6 +311,12 @@ Ext.extend(Phx.vista.TipoCosto,Phx.arbInterfaz,{
             title: 'Cuentas/Auxiliares Pendientes de Configurar',
             width: '50%',
             cls: 'CheckConfig'
+        },
+        {
+            url: '../../../sis_costos/vista/tipo_costo_prorrateo/TipoCostoProrrateo.php',
+            title: 'Clasificacion de Costo',
+            width: '50%',
+            cls: 'TipoCostoProrrateo'
         }
     ],
     /*iniciarEventos:function(){
