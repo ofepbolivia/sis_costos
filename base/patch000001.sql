@@ -122,3 +122,23 @@ WITH (oids = false);
 ALTER TABLE cos.tprorrateo_cos_det
   ALTER COLUMN id_prorrateo_det SET STATISTICS 0;
 /***********************************F-SCP-FEA-COSTOS-0-29/08/2017****************************************/
+
+/***********************************I-SCP-IRVA-COSTOS-0-31/08/2018****************************************/
+CREATE TABLE cos.ttipo_costo_prorrateo (
+  id_tipo_costo_prorrateo SERIAL,
+  codigo_prorrateo VARCHAR NOT NULL,
+  nombre VARCHAR(200) NOT NULL,
+  descripcion VARCHAR(200) NOT NULL,
+  id_tipo_costo INTEGER,
+  CONSTRAINT pk_ttipo_costo_prorrateo PRIMARY KEY(id_tipo_costo_prorrateo),
+  CONSTRAINT ttipo_costo_prorrateo_codigo_prorrateo_key UNIQUE(codigo_prorrateo),
+  CONSTRAINT ttipo_costo_fk FOREIGN KEY (id_tipo_costo)
+    REFERENCES cos.ttipo_costo(id_tipo_costo)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
+    NOT DEFERRABLE
+) INHERITS (pxp.tbase)
+
+WITH (oids = false);
+
+/***********************************F-SCP-IRVA-COSTOS-0-31/08/2018****************************************/
