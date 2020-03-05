@@ -48,6 +48,11 @@ class ACTTipoCostoCuenta extends ACTbase{
         if($this->objParam->getParametro('id_cuenta') != '') {
             $this->objParam->addFiltro(" cta.id_cuenta = " . $this->objParam->getParametro('id_cuenta'));
         }
+
+        if($this->objParam->getParametro('id_gestion')!=''){
+            $this->objParam->addFiltro("cta.id_gestion = ".$this->objParam->getParametro('id_gestion'));
+        }
+
         $this->objFunc=$this->create('MODTipoCostoCuenta');
         $this->res=$this->objFunc->listarCuentas($this->objParam);
         $this->res->imprimirRespuesta($this->res->generarJson());

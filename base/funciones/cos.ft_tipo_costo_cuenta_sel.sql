@@ -145,7 +145,9 @@ if(p_transaccion='COS_CO_SEL')then
     	begin
     		--Sentencia de la consulta
 
-            v_gestion =  EXTRACT(YEAR FROM  now())::varchar;
+			--05-03-2020 (may) modificacion debe ser segun el año que se desee, no poner automatico la actual
+
+            /*v_gestion =  EXTRACT(YEAR FROM  now())::varchar;;
 
               select
                ges.id_gestion
@@ -154,11 +156,10 @@ if(p_transaccion='COS_CO_SEL')then
               from param.tgestion ges
               where ges.gestion::varchar  = v_gestion and ges.estado_reg = 'activo';
 
-
-
         v_filtro = ' cta.nro_cuenta != ''1'' and  cta.nro_cuenta != ''11'' and cta.nro_cuenta != ''111'' and cta.nro_cuenta != ''1111'' and cta.id_gestion = '||v_id_gestion::varchar|| ' and ' ;
+		*/
 
-
+		v_filtro = ' cta.nro_cuenta != ''1'' and  cta.nro_cuenta != ''11'' and cta.nro_cuenta != ''111'' and cta.nro_cuenta != ''1111''  and ' ;
 
             v_consulta:='SELECT
                         cta.id_cuenta,
@@ -197,7 +198,9 @@ if(p_transaccion='COS_CO_SEL')then
 
 		begin
 
-            v_gestion =  EXTRACT(YEAR FROM  now())::varchar;
+            --05-03-2020 (may) modificacion debe ser segun el año que se desee, no poner automatico la actual
+
+            /*v_gestion =  EXTRACT(YEAR FROM  now())::varchar;;
 
               select
                ges.id_gestion
@@ -206,8 +209,10 @@ if(p_transaccion='COS_CO_SEL')then
               from param.tgestion ges
               where ges.gestion::varchar  = v_gestion and ges.estado_reg = 'activo';
 
-
         v_filtro = ' cta.nro_cuenta != ''1'' and  cta.nro_cuenta != ''11'' and cta.nro_cuenta != ''111'' and cta.nro_cuenta != ''1111'' and cta.id_gestion = '||v_id_gestion::varchar|| ' and ' ;
+		*/
+
+		v_filtro = ' cta.nro_cuenta != ''1'' and  cta.nro_cuenta != ''11'' and cta.nro_cuenta != ''111'' and cta.nro_cuenta != ''1111''  and ' ;
 
 
 			--Sentencia de la consulta de conteo de registros
