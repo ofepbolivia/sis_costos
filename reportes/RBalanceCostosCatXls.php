@@ -86,7 +86,7 @@ class RBalanceCostosCatXls
 		//$sheet->setCellValueByColumnAndRow(0,1,$this->objParam->getParametro('titulo_rep'));
 		$sheet->getStyle('A1')->getFont()->applyFromArray(array('bold'=>true,
 															    'size'=>12,
-															    'name'=>Arial));
+															    'name'=>'Arial'));
 																
 		$sheet->getStyle('A1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 		$sheet->setCellValueByColumnAndRow(0,1,strtoupper($titulo));		
@@ -96,7 +96,7 @@ class RBalanceCostosCatXls
 		$sheet->getStyle('A2')->getFont()->applyFromArray(array(
 															    'bold'=>true,
 															    'size'=>10,
-															    'name'=>Arial));	
+															    'name'=>'Arial'));	
 																															
 		$sheet->getStyle('A2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 		$sheet->setCellValueByColumnAndRow(0,2,strtoupper('DEPTOS: '.$codigos));		
@@ -105,7 +105,7 @@ class RBalanceCostosCatXls
 		$sheet->getStyle('A3')->getFont()->applyFromArray(array(
 															    'bold'=>true,
 															    'size'=>10,
-															    'name'=>Arial));	
+															    'name'=>'Arial'));	
 																															
 		$sheet->getStyle('A3')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 		$sheet->setCellValueByColumnAndRow(0,3,$fechas);		
@@ -115,7 +115,7 @@ class RBalanceCostosCatXls
 		$sheet->getStyle('A4')->getFont()->applyFromArray(array(
 															    'bold'=>true,
 															    'size'=>10,
-															    'name'=>Arial));	
+															    'name'=>'Arial'));	
 																															
 		$sheet->getStyle('A4')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 		$sheet->setCellValueByColumnAndRow(0,3,$moneda);		
@@ -129,7 +129,7 @@ class RBalanceCostosCatXls
 					    'italic'=>false,
 					    'underline'=>$underline,
 					    'size'=>12,
-					    'name'=>Arial);
+					    'name'=>'Arial');
 						
 						
 		
@@ -240,7 +240,7 @@ class RBalanceCostosCatXls
 					    'italic'=>false,
 					    'underline'=>$underline,
 					    'size'=>10,
-					    'name'=>Arial);*/
+					    'name'=>'Arial');*/
 		
 		
 		$this->estiloCabecera = array(
@@ -344,7 +344,7 @@ class RBalanceCostosCatXls
 															    'italic'=>$italic,
 															    'underline'=>$underline,
 															    'size'=>8,
-															    'name'=>Arial));
+															    'name'=>'Arial'));
 																
 		
 		
@@ -399,7 +399,7 @@ class RBalanceCostosCatXls
 		$sheet->getStyle(($this->equivalencias[$columnaVal]).$fila)->getFont()->applyFromArray(array(
 																    'bold'=>true,
 																    'size'=>10,
-																    'name'=>Arial,
+																    'name'=>'Arial',
 																    'color'=>$color));
 																	
 		//$sheet->mergeCells(($this->equivalencias[$columna]).$fila.':Q'.$fila);													
