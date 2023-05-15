@@ -60,8 +60,6 @@ class ACTProrrateoCos extends ACTbase{
 		$this->res=$this->objFunc->validarProrrateo($this->objParam);
 		$this->res->imprimirRespuesta($this->res->generarJson());
 	}
-
-
 }
 
 ?>
