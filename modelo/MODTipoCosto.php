@@ -228,5 +228,23 @@ function listarTipoCostoArb(){
 			
      }
 
+    //fRnk: HR01008
+    function listarCostoUnitarioOT(){
+        $this->procedimiento='cos.f_orden_trabajo_sel';
+        $this-> setCount(false);
+        $this->transaccion='COS_CUOT_SEL';
+        $this->tipo_procedimiento='SEL';
+        $this->setParametro('id_orden_trabajo','id_orden_trabajo','varchar');
+        $this->captura('fecha_final','varchar');
+        $this->captura('fecha_inicio','varchar');
+        $this->captura('codigo','varchar');
+        $this->captura('desc_orden','varchar');
+        $this->captura('motivo_orden','varchar');
+        $this->captura('costo_acumulado','numeric');
+        $this->captura('cantidad_ot','numeric');
+        $this->armarConsulta();
+        $this->ejecutarConsulta();
+        return $this->respuesta;
+    }
 } 
 ?>

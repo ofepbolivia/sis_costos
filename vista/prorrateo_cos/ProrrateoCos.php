@@ -184,12 +184,13 @@ var that = this;
 				allowBlank: true,
 				anchor: '80%',
 				gwidth: 100,
-				maxLength: 25,
+				maxLength: 200,
 				typeAhead:true,
 				forceSelection: true,
 				triggerAction:'all',
 				mode:'local',
-				store:[ 'Hrs Vuelo ATO', 'ASK, RPK', 'Nro. Vuelos', 'Hrs. Vuelo Flota','Hrs. Vuelo Nave', 'NroPasajeros', 'ASK'],
+				//store:[ 'Hrs Vuelo ATO', 'ASK, RPK', 'Nro. Vuelos', 'Hrs. Vuelo Flota','Hrs. Vuelo Nave', 'NroPasajeros', 'ASK'],
+				store:[ 'Horas trabajadas en la jornada', 'Cantidad de empleados del centro de costo','Número de equipos ocupados'], //fRnk
 
 				style:'text-transform:uppercase; background:#C5E5F5; color:blue; font-weight:bold'
 				},

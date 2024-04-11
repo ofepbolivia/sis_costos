@@ -108,7 +108,7 @@ class MODTipoCostoCuenta extends MODbase{
 	function listarCuentas(){
         //Definicion de variables para ejecucion del procedimientp
         $this->procedimiento='cos.ft_tipo_costo_cuenta_sel';
-        $this->transaccion='COS_CUE_SEL';
+        $this->transaccion='COS_CTO_CUE_SEL'; //fRnk: modificado la transacción para que despliegue sólo las cuentas tipo movimiento, original: 'COS_CUE_SEL';
         $this->tipo_procedimiento='SEL';//tipo de transaccion
 
         //Definicion de la lista del resultado del query

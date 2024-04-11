@@ -8,7 +8,8 @@
 */
 require_once(dirname(__FILE__).'/../reportes/RBalanceCostosXls.php');
 require_once(dirname(__FILE__).'/../reportes/RBalanceCostosCatXls.php');
-class ACTTipoCosto extends ACTbase{    
+require_once(dirname(__FILE__).'/../reportes/RCostoUnitarioOTPDF.php');
+class ACTTipoCosto extends ACTbase{
 			
 	function listarTipoCosto(){
 		$this->objParam->defecto('ordenacion','id_tipo_costo_fk');
@@ -218,8 +219,37 @@ class ACTTipoCosto extends ACTbase{
 		$this->mensajeExito->imprimirRespuesta($this->mensajeExito->generarJson());
 				
 	}
-	
-			
+
+    //fRnk: HR01008
+    function reporteCostoUnitarioOT()
+    {
+        $this->objFunc = $this->create('MODTipoCosto');
+        $cbteHeader = $this->objFunc->listarCostoUnitarioOT($this->objParam);
+        $dataSource = null;
+        if ($cbteHeader->getTipo() == 'EXITO') {
+            $dataSource = $cbteHeader->getDatos();
+        } else {
+            $cbteHeader->imprimirRespuesta($cbteHeader->generarJson());
+            exit;
+        }
+
+        $nombreArchivo = uniqid(md5(session_id()) . 'cuot') . '.pdf';
+        $tamano = 'LETTER';
+        $orientacion = 'P';
+        $this->objParam->addParametro('orientacion', $orientacion);
+        $this->objParam->addParametro('tamano', $tamano);
+        $this->objParam->addParametro('titulo_archivo', 'cuot');
+        $this->objParam->addParametro('nombre_archivo', $nombreArchivo);
+        $reporte = new RCostoUnitarioOTPDF($this->objParam);
+        $reporte->datosHeader($dataSource);
+
+        $reporte->generarReporte();
+        $reporte->output($reporte->url_archivo, 'F');
+        $this->mensajeExito = new Mensaje();
+        $this->mensajeExito->setMensaje('EXITO', 'Reporte.php', 'Reporte generado', 'Se generó con éxito el reporte: ' . $nombreArchivo, 'control');
+        $this->mensajeExito->setArchivoGenerado($nombreArchivo);
+        $this->mensajeExito->imprimirRespuesta($this->mensajeExito->generarJson());
+    }
 }
 
 ?>
