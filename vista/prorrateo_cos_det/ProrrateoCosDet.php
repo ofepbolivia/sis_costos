@@ -110,7 +110,7 @@ Phx.vista.ProrrateoCosDet=Ext.extend(Phx.gridInterfaz,{
 				name: 'id_tipo_costo',
 				fieldLabel: 'Tipo de Costo',
 				labelStyle: 'font-weight:bold; color:#005300;',
-				allowBlank: true,
+				allowBlank: false,
 				emptyText: 'Elija una opción...',
 				store: new Ext.data.JsonStore({
 					url: '../../sis_costos/control/TipoCosto/listarTipoCosto',
@@ -170,7 +170,7 @@ Phx.vista.ProrrateoCosDet=Ext.extend(Phx.gridInterfaz,{
 				name: 'cuenta_nro',
 				fieldLabel: 'Nro Cuenta',
 				labelStyle: 'font-weight:bold; color:#005300;',
-				allowBlank: true,
+				allowBlank: false,
 				emptyText: 'Elija una cuenta...',
 				disabled: true,
 				store: new Ext.data.JsonStore({
@@ -232,7 +232,7 @@ Phx.vista.ProrrateoCosDet=Ext.extend(Phx.gridInterfaz,{
 				fieldLabel: 'Auxiliar',
 				labelStyle: 'font-weight:bold;',
 				enableMultiSelect: true,
-				allowBlank: true,
+				allowBlank: false,
 				emptyText: 'Elija un auxiliar...',
 				disabled: true,
 				store: new Ext.data.JsonStore({

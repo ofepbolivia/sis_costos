@@ -65,7 +65,7 @@ class RCostoUnitarioOTPDF extends ReportePDF
                 </td></tr>';
             $html .= '<tr><td><b>Costo acumulado:</b></td><td> ' . number_format($costo_acumulado, 2, ',', '.') . '</td></tr>';
             $html .= '<tr><td><b>Cantidad del pedido:</b></td><td> ' . $cantidad_ot . '</td></tr>';
-            $html .= '<tr><td><b>Costo unitario:</b></td><td> ' . number_format(($costo_acumulado / $cantidad_ot), 2, ',', '.') . '</td></tr>';
+            $html .= '<tr><td><b>Costo unitario:</b></td><td> ' . number_format(($costo_acumulado / $cantidad_ot), 2, ',', '.') . '<br><br><br><br></td></tr>';
         }
         $html .= '</table>';
         $this->writeHTML($html, false, false, false, false, '');

@@ -231,7 +231,7 @@ function listarTipoCostoArb(){
     //fRnk: HR01008
     function listarCostoUnitarioOT(){
         $this->procedimiento='cos.f_orden_trabajo_sel';
-        $this-> setCount(false);
+        $this->setCount(false);
         $this->transaccion='COS_CUOT_SEL';
         $this->tipo_procedimiento='SEL';
         $this->setParametro('id_orden_trabajo','id_orden_trabajo','varchar');
@@ -242,6 +242,31 @@ function listarTipoCostoArb(){
         $this->captura('motivo_orden','varchar');
         $this->captura('costo_acumulado','numeric');
         $this->captura('cantidad_ot','numeric');
+        $this->armarConsulta();
+        $this->ejecutarConsulta();
+        return $this->respuesta;
+    }
+
+    function listarComprobantesOT(){
+        $this->procedimiento='cos.f_orden_trabajo_sel';
+        $this->setCount(false);
+        $this->transaccion='COS_DCUOT_SEL';
+        $this->tipo_procedimiento='SEL';
+        $this->setParametro('id_orden_trabajo','id_orden_trabajo','varchar');
+        $this->setParametro('id_deptos','id_deptos','varchar');
+        $this->setParametro('desde','desde','varchar');
+        $this->setParametro('hasta','hasta','varchar');
+        $this->captura('mes','integer');
+        $this->captura('importe_debe_mb','numeric');
+        $this->captura('importe_haber_mb','numeric');
+        $this->captura('importe_debe_mt','numeric');
+        $this->captura('importe_haber_mt','numeric');
+        $this->captura('importe_gasto_mb','numeric');
+        $this->captura('importe_recurso_mb','numeric');
+        $this->captura('importe_gasto_mt','numeric');
+        $this->captura('importe_recurso_mt','numeric');
+        $this->captura('tipo_costo','varchar');
+        $this->captura('factor','numeric');
         $this->armarConsulta();
         $this->ejecutarConsulta();
         return $this->respuesta;

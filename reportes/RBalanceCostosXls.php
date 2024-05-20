@@ -56,7 +56,7 @@ class RBalanceCostosXls
 	
 	
 	function imprimirTitulo($sheet){
-		$titulo = 'Árbol de Ánalisis de Costos ';
+		$titulo = 'Árbol de Análisis de Costos ';
 		$codigos = $this->objParam->getParametro('codigos');		
 		$fechas = 'Del '.$this->objParam->getParametro('desde').' al '.$this->objParam->getParametro('hasta');
 		$moneda = 'Expresado en moneda base';
@@ -97,7 +97,7 @@ class RBalanceCostosXls
 															    'name'=>'Arial'));
 																
 		$sheet->getStyle('A1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-		$sheet->setCellValueByColumnAndRow(0,1,strtoupper($titulo));		
+		$sheet->setCellValueByColumnAndRow(0,1,mb_strtoupper($titulo, 'UTF-8'));
 		$sheet->mergeCells('A1:T1');
 		
 		//DEPTOS TITLE

@@ -314,7 +314,7 @@ Ext.extend(Phx.vista.TipoCosto,Phx.arbInterfaz,{
         },
         {
             url: '../../../sis_costos/vista/tipo_costo_prorrateo/TipoCostoProrrateo.php',
-            title: 'Clasificacion de Costo',
+            title: 'Clasificación de Costo',
             width: '50%',
             cls: 'TipoCostoProrrateo'
         }

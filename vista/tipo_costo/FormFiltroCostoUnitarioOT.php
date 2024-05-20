@@ -44,7 +44,7 @@ header("content-type: text/javascript; charset=UTF-8");
                         totalProperty: 'total',
                         fields: ['id_orden_trabajo', 'motivo_orden', 'desc_orden', 'motivo_orden'],
                         remoteSort: true,
-                        baseParams: {par_filtro: 'desc_orden#motivo_orden'}
+                        baseParams: {par_filtro: 'desc_orden#motivo_orden', raiz: 'no'} //fRnk: HR00552
                     }),
                     valueField: 'id_orden_trabajo',
                     displayField: 'desc_orden',
@@ -90,6 +90,7 @@ header("content-type: text/javascript; charset=UTF-8");
                     triggerAction: 'all',
                     lazyRender: true,
                     mode: 'remote',
+                    enableMultiSelect: true, //fRnk: HR00552
                     pageSize: 20,
                     queryDelay: 500,
                     width: 180,
@@ -99,7 +100,7 @@ header("content-type: text/javascript; charset=UTF-8");
                         return String.format('<b>{0}</b><br>{1}', value, record.data.descripcion);
                     }
                 },
-                type: 'ComboBox',
+                type: 'AwesomeCombo',
                 filters: {
                     pfiltro: 'mon.codigo',
                     type: 'string'

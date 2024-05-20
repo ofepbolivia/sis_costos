@@ -37,6 +37,15 @@ class MODProrrateoCos extends MODbase{
 		//$this->captura('gestion','integer');
 		$this->captura('id_tipo_costo_prorrateo','int4');
 		$this->captura('nombre','varchar');
+		//fRnk: adicionado requerimientos HR01014
+		$this->captura('descripcion','varchar');
+		$this->captura('id_tipo_prorrateo','int4');
+		$this->captura('tipo_prorrateo_nombre','varchar');
+		$this->captura('desde','date');
+		$this->captura('hasta','date');
+		$this->captura('id_cuenta','int4');
+		$this->captura('acumulado_cuenta','numeric');
+		$this->captura('nro_cuenta','varchar');
 
 		//Ejecuta la instruccion
 		$this->armarConsulta();
@@ -60,7 +69,13 @@ class MODProrrateoCos extends MODbase{
 		//$this->setParametro('id_gestion','id_gestion','int4');
 		$this->setParametro('id_tipo_costo_prorrateo','id_tipo_costo_prorrateo','int4');
 		$this->setParametro('nombre','nombre','varchar');
-
+		//fRnk: adicionado requerimientos HR01014
+		$this->setParametro('descripcion','descripcion','varchar');
+		$this->setParametro('id_tipo_prorrateo','id_tipo_prorrateo','int4');
+		$this->setParametro('desde','desde','date');
+		$this->setParametro('hasta','hasta','date');
+		$this->setParametro('id_cuenta','id_cuenta','int4');
+		$this->setParametro('acumulado_cuenta','acumulado_cuenta','numeric');
 		//Ejecuta la instruccion
 		$this->armarConsulta();
 		$this->ejecutarConsulta();
@@ -83,6 +98,13 @@ class MODProrrateoCos extends MODbase{
 		$this->setParametro('estado_reg','estado_reg','varchar');
 		//$this->setParametro('id_gestion','id_gestion','int4');
 		$this->setParametro('id_tipo_costo_prorrateo','id_tipo_costo_prorrateo','int4');
+		//fRnk: adicionado requerimientos HR01014
+		$this->setParametro('descripcion','descripcion','varchar');
+		$this->setParametro('id_tipo_prorrateo','id_tipo_prorrateo','int4');
+		$this->setParametro('desde','desde','date');
+		$this->setParametro('hasta','hasta','date');
+		$this->setParametro('id_cuenta','id_cuenta','int4');
+		$this->setParametro('acumulado_cuenta','acumulado_cuenta','numeric');
 
 		//Ejecuta la instruccion
 		$this->armarConsulta();
