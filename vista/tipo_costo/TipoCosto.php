@@ -215,7 +215,7 @@ Phx.vista.TipoCosto =function (config) {
 
 
     Phx.vista.TipoCosto.superclass.constructor.call(this,config);
-    this.tbar.items.get('b-new-'+this.idContenedor).disable();
+    //this.tbar.items.get('b-new-'+this.idContenedor).disable(); fRnk: habilitado, es necesario hacer un análisis
     //Agregar elementos en la barra de tareas
     //this.tbar.add(this.cmbGestion);
     this.init();
