@@ -46,22 +46,29 @@ class RCostoUnitarioOTPeriodosPDF extends ReportePDF
         $total = 0;
         $totales_directo = array();
         $totales_indirecto = array();
+        $total_cd = 0;
+        $total_ci = 0;
+        $factor = 1;
         foreach ($this->datos_detalle as $item) {
-            //balance: v_resp_mayor = COALESCE(v_sum_debe,0) - COALESCE(v_sum_haber,0);
             $monto = (float)$item['importe_debe_mb'] - (float)$item['importe_haber_mb'];
-            /*$total += $monto; //válido sin prorrateo
+            $total += $monto; //válido sin prorrateo
             $total += (float)$item['monto'];
             if ($item['tipo_costo'] == 'DIRECTO') {
                 $totales_directo[$item["mes"]] = $monto;
+                $total_cd += (float)$monto;
             } else {
                 $totales_indirecto[$item["mes"]] = $monto;
-            }*/
-            if ($item['tipo_costo'] == 'DIRECTO') { // valido con prorrateo
-                $totales_directo[$item["mes"]] = $monto;
-                $totales_indirecto[$item["mes"]] = round( $monto*$item['factor'], 2);
-                $total += $monto;
-                $total += $totales_indirecto[$item["mes"]];
+                $total_ci += (float)$monto;
             }
+            /*if ($item['tipo_costo'] == 'DIRECTO') { // valido con prorrateo
+                 $totales_directo[$item["mes"]] = $monto;
+                 $totales_indirecto[$item["mes"]] = round( $monto*$item['factor'], 2);
+                 $total += $monto;
+                 $total += $totales_indirecto[$item["mes"]];
+             }*/
+        }
+        if ($total_cd > 0) {
+            $factor = $total_ci / $total_cd;
         }
         $mdesde = (int)explode('/', $this->desde)[1];
         $mhasta = (int)explode('/', $this->hasta)[1];
@@ -84,15 +91,20 @@ class RCostoUnitarioOTPeriodosPDF extends ReportePDF
             if (isset($totales_directo[$i])) {
                 $html_cd .= '<td style="text-align: right">' . number_format($totales_directo[$i], 2, ',', '.') . '</td>';
                 $total_cd += (float)$totales_directo[$i];
+
+                $monto_ci = (float)$totales_directo[$i] * $factor;
+                $html_ci .= '<td style="text-align: right">' . number_format($monto_ci, 2, ',', '.') . '</td>';
+                $total_ci += (float)$monto_ci;
             } else {
                 $html_cd .= '<td style="text-align: right">' . number_format(0, 2, ',', '.') . '</td>';
-            }
-            if (isset($totales_indirecto[$i])) {
-                $html_ci .= '<td style="text-align: right">' . number_format($totales_indirecto[$i], 2, ',', '.') . '</td>';
-                $total_ci += (float)$totales_indirecto[$i];
-            } else {
                 $html_ci .= '<td style="text-align: right">' . number_format(0, 2, ',', '.') . '</td>';
             }
+            /*if (isset($totales_indirecto[$i])) {
+                $html_ci .= '<td style="text-align: right">' . number_format($totales_directo[$i], 2, ',', '.') . '</td>';
+                $total_ci += (float)$monto_ci;
+            } else {
+                $html_ci .= '<td style="text-align: right">' . number_format(0, 2, ',', '.') . '</td>';
+            }*/
         }
         $cantidad_ot = empty($this->datos_cabecera[0]['cantidad_ot']) ? 1 : $this->datos_cabecera[0]['cantidad_ot'];
         $html .= '<tr style="text-align: center;background-color: #ccc"><td><b>DESCRIPCIÓN</b></td>' . $html_meses . '<td><b>TOTAL</b></td></tr>';

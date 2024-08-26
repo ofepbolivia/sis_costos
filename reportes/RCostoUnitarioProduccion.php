@@ -47,6 +47,9 @@ class RCostoUnitarioProduccion extends ReportePDF
         $total = 0;
         $totales_directo = array();
         $totales_indirecto = array();
+        $total_cd = 0;
+        $total_ci = 0;
+        $factor = 1;
         foreach ($this->datos_detalle as $item) {
             if ($item['nivel'] == '1') {
                 $total += (float)$item['monto'];
@@ -54,10 +57,15 @@ class RCostoUnitarioProduccion extends ReportePDF
             if ($item['nivel'] == '2') {
                 if ($item['nombre'] == 'COSTOS DIRECTOS') {
                     $totales_directo[$item["periodo"]] = $item['monto'];
+                    $total_cd += (float)$item['monto'];
                 } else {
                     $totales_indirecto[$item["periodo"]] = $item['monto'];
+                    $total_ci += (float)$item['monto'];
                 }
             }
+        }
+        if ($total_cd > 0) {
+            $factor = $total_ci / $total_cd;
         }
         $mdesde = (int)explode('/', $this->desde)[1];
         $mhasta = (int)explode('/', $this->hasta)[1];
@@ -78,19 +86,24 @@ class RCostoUnitarioProduccion extends ReportePDF
             if (isset($totales_directo[$i])) {
                 $html_cd .= '<td style="text-align: right">' . number_format($totales_directo[$i], 2, ',', '.') . '</td>';
                 $total_cd += (float)$totales_directo[$i];
+
+                $monto_ci = (float)$totales_directo[$i] * $factor;
+                $html_ci .= '<td style="text-align: right">' . number_format($monto_ci, 2, ',', '.') . '</td>';
+                $total_ci += $monto_ci;
             } else {
                 $html_cd .= '<td style="text-align: right">' . number_format(0, 2, ',', '.') . '</td>';
+                $html_ci .= '<td style="text-align: right">' . number_format(0, 2, ',', '.') . '</td>';
             }
-            if (isset($totales_indirecto[$i])) {
+            /*if (isset($totales_indirecto[$i])) {
                 $html_ci .= '<td style="text-align: right">' . number_format($totales_indirecto[$i], 2, ',', '.') . '</td>';
                 $total_ci += (float)$totales_indirecto[$i];
             } else {
                 $html_ci .= '<td style="text-align: right">' . number_format(0, 2, ',', '.') . '</td>';
-            }
+            }*/
         }
         $html .= '<tr style="text-align: center;background-color: #ccc"><td><b>DESCRIPCIÓN</b></td>' . $html_meses . '<td><b>TOTAL</b></td></tr>';
         $html .= '<tr><td>Total Costo Directo</td>' . $html_cd . '<td style="text-align: right"><b>' . number_format($total_cd, 2, ',', '.') . '</b></td></tr>';
-        $html .= '<tr><td>Total Costo Indirecto</td>' . $html_ci . '<td style="text-align: right"><b>' . number_format($total_ci, 2, ',', '.') . '</b></td></tr>';
+        $html .= '<tr><td>Total Costo Indirecto prorrateado</td>' . $html_ci . '<td style="text-align: right"><b>' . number_format($total_ci, 2, ',', '.') . '</b></td></tr>';
         $html .= '<tr><td>Cantidad de unidades producidas terminadas</td>' . $html_td . '<td style="text-align: right"><b>' . $this->cantidad . '</b></td></tr>';
         $html .= '<tr><td>Costo unitario</td>' . $html_td . '<td style="text-align: right"><b>' . number_format(($total / $this->cantidad), 2, ',', '.') . '</b></td></tr>';
         $html .= '</table>';
