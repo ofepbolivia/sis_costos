@@ -113,7 +113,7 @@ header("content-type: text/javascript; charset=UTF-8");
                 config: {
                     name: 'id_subordenes',
                     fieldLabel: 'Sub ordenes',
-                    allowBlank: false,
+                    allowBlank: true,
                     emptyText: 'Seleccione una suborden...',
                     store: new Ext.data.JsonStore({
                         url: '../../sis_contabilidad/control/Suborden/listarSuborden',

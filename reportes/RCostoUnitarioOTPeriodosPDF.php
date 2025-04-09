@@ -52,7 +52,7 @@ class RCostoUnitarioOTPeriodosPDF extends ReportePDF
         foreach ($this->datos_detalle as $item) {
             $monto = (float)$item['importe_debe_mb'] - (float)$item['importe_haber_mb'];
             $total += $monto; //válido sin prorrateo
-            $total += (float)$item['monto'];
+            //$total += (float)$item['monto'];
             if ($item['tipo_costo'] == 'DIRECTO') {
                 $totales_directo[$item["mes"]] = $monto;
                 $total_cd += (float)$monto;
@@ -106,6 +106,7 @@ class RCostoUnitarioOTPeriodosPDF extends ReportePDF
                 $html_ci .= '<td style="text-align: right">' . number_format(0, 2, ',', '.') . '</td>';
             }*/
         }
+        $total = $total_cd + $total_ci;
         $cantidad_ot = empty($this->datos_cabecera[0]['cantidad_ot']) ? 1 : $this->datos_cabecera[0]['cantidad_ot'];
         $html .= '<tr style="text-align: center;background-color: #ccc"><td><b>DESCRIPCIÓN</b></td>' . $html_meses . '<td><b>TOTAL</b></td></tr>';
         $html .= '<tr><td>Total Costo Directo</td>' . $html_cd . '<td style="text-align: right"><b>' . number_format($total_cd, 2, ',', '.') . '</b></td></tr>';
