@@ -9,6 +9,7 @@
 require_once(dirname(__FILE__) . '/../reportes/RBalanceCostosXls.php');
 require_once(dirname(__FILE__) . '/../reportes/RBalanceCostosCatXls.php');
 require_once(dirname(__FILE__) . '/../reportes/RCostoUnitarioOTPDF.php');
+require_once(dirname(__FILE__) . '/../reportes/REstructuraCostoPDF.php');
 require_once(dirname(__FILE__) . '/../reportes/RCostoUnitarioProduccion.php');
 require_once(dirname(__FILE__) . '/../reportes/RCostoUnitarioOTPeriodosPDF.php');
 
@@ -45,15 +46,15 @@ class ACTTipoCosto extends ACTbase
 
         //obtiene el parametro nodo enviado por la vista
         $node = $this->objParam->getParametro('node');
-
         $id_tipo_costo = $this->objParam->getParametro('id_tipo_costo');
         $tipo_nodo = $this->objParam->getParametro('tipo_nodo');
-
-
+        $id_gestion = $this->objParam->getParametro('id_gestion'); // NMQ 2024 01237
         if ($node == 'id') {
             $this->objParam->addParametro('id_padre', '%');
+            $this->objParam->addParametro('id_gestion', $id_gestion); // NMQ 2024 01237
         } else {
             $this->objParam->addParametro('id_padre', $id_tipo_costo);
+            $this->objParam->addParametro('id_gestion', $id_gestion); // NMQ 2024 01237
         }
 
         $this->objFunc = $this->create('MODTipoCosto');
@@ -299,6 +300,50 @@ class ACTTipoCosto extends ACTbase
             $this->mensajeExito->imprimirRespuesta($this->mensajeExito->generarJson());
         }
     }
+    //Add function NMQ 2024 01237
+    function replicarCostos()
+    {
+        $this->objFunc = $this->create('MODTipoCosto');
+        $this->res = $this->objFunc->replicarCostos($this->objParam);
+        $this->res->imprimirRespuesta($this->res->generarJson());
+    }
+
+    function imprimirClasificador()
+    {
+        $this->objFunc = $this->create('MODTipoCosto');
+        $cbteHeader = $this->objFunc->listarClasificador($this->objParam);
+        $dataSource = null;
+        if ($cbteHeader->getTipo() == 'EXITO') {
+            $dataSource = $cbteHeader->getDatos();
+        } else {
+            $cbteHeader->imprimirRespuesta($cbteHeader->generarJson());
+            exit;
+        }
+
+        $nombreArchivo = uniqid(md5(session_id()) . 'cuot') . '.pdf';
+        $tamano = 'LETTER';
+        $orientacion = 'P';
+        $this->objParam->addParametro('orientacion', $orientacion);
+        $this->objParam->addParametro('tamano', $tamano);
+        $this->objParam->addParametro('titulo_archivo', 'costos');
+        $this->objParam->addParametro('nombre_archivo', $nombreArchivo);
+        $reporte = new REstructuraCostoPDF($this->objParam);
+        $reporte->datosHeader($dataSource);
+
+        $reporte->generarReporte();
+        $reporte->output($reporte->url_archivo, 'F');
+        // $this->mensajeExito = new Mensaje();
+        // $this->mensajeExito->setMensaje('EXITO', 'Reporte.php', 'Reporte generado', 'Se generó con éxito el reporte: ' . $nombreArchivo, 'control');
+        // $this->mensajeExito->setArchivoGenerado($nombreArchivo);
+        // $this->mensajeExito->imprimirRespuesta($this->mensajeExito->generarJson());
+
+        $mensajeExito = new Mensaje();
+        $mensajeExito->setMensaje('EXITO', 'Reporte.php', 'Reporte generado', 'Se generó con éxito el reporte: ' . $nombreArchivo, 'control');
+        $mensajeExito->setArchivoGenerado($nombreArchivo);
+        $this->res = $mensajeExito;
+        $this->res->imprimirRespuesta($this->res->generarJson());
+    }
+    //End function NMQ 2024 01237
 }
 
 ?>
